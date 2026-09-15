@@ -1,13 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System;
 
+[Serializable]
 public class CharacterState
 {
     public string name;
     public Sprite sprite;
 }
 
+[Serializable]
 public class CharacterWorldConfig
 {
     public Vector2 size;
@@ -16,6 +19,7 @@ public class CharacterWorldConfig
     public float faceHeight;
 }
 
+[Serializable]
 public class Character
 {
     public string id;
