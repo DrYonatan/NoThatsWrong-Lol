@@ -16,23 +16,23 @@
             <ui:Toggle name="not-visible-field" label="Not Visible" style="-unity-font-style: bold; color: rgb(255, 255, 255); font-size: 30px;"/>
         </ui:VisualElement>
         <ui:VisualElement name="stage-2" class="stage" style="display: none;">
-            <ui:Label text="Emotions &amp; Face" class="stage-title"/>
-            <ui:DropdownField name="face-sprite-field" label="Face Sprite"/>
-            <ui:Label name="emotions-title" text="Emotions" class="section-label"/>
+            <ui:Label text="Emotions &amp; Face" class="stage-title" style="-unity-font-style: bold; color: rgb(255, 255, 255); -unity-text-align: upper-center; font-size: 40px;"/>
+            <ui:DropdownField name="face-sprite-field" label="Face Sprite" style="color: rgb(255, 255, 255); -unity-font-style: bold; font-size: 25px;"/>
+            <ui:Label name="emotions-title" text="Emotions" class="section-label" style="-unity-font-style: bold; color: rgb(255, 255, 255); font-size: 30px;"/>
             <ui:VisualElement name="emotions-list" class="emotions-list"/>
-            <ui:Button name="add-emotion-button" text="+ Add Emotion" class="add-emotion-button"/>
+            <ui:Button name="add-emotion-button" text="+ Add Emotion" class="add-emotion-button" style="font-size: 25px; -unity-font-style: bold; color: rgb(255, 255, 255);"/>
         </ui:VisualElement>
         <ui:VisualElement name="stage-3" class="stage" style="display: none;">
-            <ui:Label text="World Settings" class="stage-title"/>
-            <ui:Label text="How the character is scaled and placed in the courtroom." class="field-hint"/>
-            <ui:Vector2Field name="size-field" label="Size"/>
-            <ui:Vector2Field name="offset-field" label="Offset"/>
-            <ui:FloatField name="face-height-field" label="Face Height"/>
+            <ui:Label text="World Settings" class="stage-title" style="-unity-font-style: bold; color: rgb(255, 255, 255); -unity-text-align: upper-center; font-size: 40px;"/>
+            <ui:Label text="How the character is scaled and placed in the courtroom." class="field-hint" style="color: rgb(255, 255, 255); font-size: 25px;"/>
+            <ui:Vector2Field name="size-field" label="Size" style="color: rgb(255, 255, 255); -unity-font-style: bold; font-size: 25px;"/>
+            <ui:Vector2Field name="offset-field" label="Offset" style="color: rgb(255, 255, 255); -unity-font-style: bold; font-size: 25px;"/>
+            <ui:FloatField name="face-height-field" label="Face Height" style="color: rgb(255, 255, 255); -unity-font-style: bold; font-size: 25px;"/>
         </ui:VisualElement>
         <ui:VisualElement class="nav-bar">
-            <ui:Button name="back-button" text="Back" class="nav-button back-button" style="display: none;"/>
+            <ui:Button name="back-button" text="Back" class="nav-button back-button" style="display: none; font-size: 30px; -unity-font-style: bold; color: rgb(255, 255, 255);"/>
             <ui:Label name="status-label" text="" class="status-label"/>
-            <ui:Button name="next-button" text="Next" class="nav-button next-button" style="font-size: 30px; -unity-font-style: bold;"/>
+            <ui:Button name="next-button" text="Next" class="nav-button next-button" style="font-size: 30px; -unity-font-style: bold; color: rgb(255, 255, 255);"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

@@ -1,29 +1,29 @@
 .creator-root {
     flex-grow: 1;
-    padding: 24px;
+    padding: 32px;
     background-color: rgb(26, 26, 30);
 }
 
 .title-label {
-    font-size: 22px;
+    font-size: 40px;
     -unity-font-style: bold;
     color: rgb(235, 235, 235);
-    margin-bottom: 14px;
+    margin-bottom: 24px;
 }
 
 .progress-area {
-    margin-bottom: 18px;
+    margin-bottom: 28px;
 }
 
 .progress-label {
-    font-size: 12px;
+    font-size: 16px;
     color: rgb(160, 160, 166);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .progress-track {
-    height: 6px;
-    border-radius: 3px;
+    height: 8px;
+    border-radius: 4px;
     background-color: rgb(55, 55, 62);
     overflow: hidden;
 }
@@ -37,36 +37,36 @@
 
 .stage {
     flex-grow: 1;
-    padding: 18px;
+    padding: 28px;
     border-width: 1px;
     border-color: rgb(48, 48, 54);
-    border-radius: 6px;
+    border-radius: 8px;
     background-color: rgb(32, 32, 37);
 }
 
 .stage-title {
-    font-size: 16px;
+    font-size: 30px;
     -unity-font-style: bold;
     color: rgb(235, 235, 235);
-    margin-bottom: 12px;
+    margin-bottom: 18px;
 }
 
 .field-hint {
-    font-size: 11px;
-    color: rgb(140, 140, 148);
-    margin-bottom: 8px;
+    font-size: 18px;
+    color: rgb(160, 160, 168);
+    margin-bottom: 12px;
 }
 
 .section-label {
-    font-size: 14px;
+    font-size: 24px;
     -unity-font-style: bold;
     color: rgb(220, 220, 224);
-    margin-top: 16px;
-    margin-bottom: 8px;
+    margin-top: 24px;
+    margin-bottom: 12px;
 }
 
 .stage > * {
-    margin-bottom: 8px;
+    margin-bottom: 16px;
 }
 
 .emotions-list {
@@ -76,30 +76,36 @@
 .emotion-row {
     flex-direction: row;
     align-items: flex-end;
-    padding: 8px;
-    margin-bottom: 6px;
-    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 6px;
     background-color: rgb(24, 24, 28);
 }
 
 .emotion-name {
     flex-grow: 1;
-    margin-right: 8px;
+    margin-right: 12px;
+    color: rgb(235, 235, 235);
+    font-size: 16px;
 }
 
 .emotion-sprite {
     flex-grow: 1;
-    margin-right: 8px;
+    margin-right: 12px;
+    color: rgb(235, 235, 235);
+    font-size: 16px;
 }
 
 .emotion-remove {
-    width: 30px;
-    height: 30px;
-    margin-bottom: 2px;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 3px;
+    color: rgb(235, 235, 235);
+    font-size: 16px;
 }
 
 .add-emotion-button {
-    margin-top: 6px;
+    margin-top: 10px;
     align-self: flex-start;
 }
 
@@ -107,15 +113,16 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin-top: 16px;
+    margin-top: 28px;
 }
 
 .nav-button {
-    min-width: 110px;
+    min-width: 140px;
+    min-height: 44px;
 }
 
 .status-label {
-    font-size: 12px;
+    font-size: 16px;
     color: rgb(120, 200, 120);
     flex-grow: 1;
     text-align: center;
