@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using SFB;
 
 [Serializable]
 public class CharacterJson
@@ -132,6 +133,30 @@ public static class CharacterIO
         }
 
         return options;
+    }
+
+    public static string SpriteSelection()
+    {
+        var extensions = new[]
+        {
+        new ExtensionFilter("Image Files", "png", "jpg", "jpeg")
+        };
+
+        var paths = StandaloneFileBrowser.OpenFilePanel(
+           "Select Image",
+           "",
+           extensions,
+           false
+        );
+
+        if (paths.Length > 0)
+        {
+            string selectedPath = paths[0];
+
+            return selectedPath;
+        }
+
+        return null;
     }
 
     public static Texture2D LoadTexture(string path)
