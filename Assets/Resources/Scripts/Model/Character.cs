@@ -25,7 +25,6 @@ public class Character
     public string id;
     public string name;
     public string displayName;
-    public GameObject vnObjectPrefab;
     public List<CharacterState> emotions;
     public Sprite faceSprite;
     public bool notVisible;

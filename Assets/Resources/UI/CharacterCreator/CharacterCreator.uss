@@ -1,0 +1,126 @@
+.creator-root {
+    flex-grow: 1;
+    padding: 24px;
+    background-color: rgb(26, 26, 30);
+}
+
+.title-label {
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: rgb(235, 235, 235);
+    margin-bottom: 14px;
+}
+
+.progress-area {
+    margin-bottom: 18px;
+}
+
+.progress-label {
+    font-size: 12px;
+    color: rgb(160, 160, 166);
+    margin-bottom: 6px;
+}
+
+.progress-track {
+    height: 6px;
+    border-radius: 3px;
+    background-color: rgb(55, 55, 62);
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background-color: rgb(66, 165, 245);
+    transition-duration: 200ms;
+}
+
+.stage {
+    flex-grow: 1;
+    padding: 18px;
+    border-width: 1px;
+    border-color: rgb(48, 48, 54);
+    border-radius: 6px;
+    background-color: rgb(32, 32, 37);
+}
+
+.stage-title {
+    font-size: 16px;
+    -unity-font-style: bold;
+    color: rgb(235, 235, 235);
+    margin-bottom: 12px;
+}
+
+.field-hint {
+    font-size: 11px;
+    color: rgb(140, 140, 148);
+    margin-bottom: 8px;
+}
+
+.section-label {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: rgb(220, 220, 224);
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+.stage > * {
+    margin-bottom: 8px;
+}
+
+.emotions-list {
+    flex-grow: 1;
+}
+
+.emotion-row {
+    flex-direction: row;
+    align-items: flex-end;
+    padding: 8px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    background-color: rgb(24, 24, 28);
+}
+
+.emotion-name {
+    flex-grow: 1;
+    margin-right: 8px;
+}
+
+.emotion-sprite {
+    flex-grow: 1;
+    margin-right: 8px;
+}
+
+.emotion-remove {
+    width: 30px;
+    height: 30px;
+    margin-bottom: 2px;
+}
+
+.add-emotion-button {
+    margin-top: 6px;
+    align-self: flex-start;
+}
+
+.nav-bar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.nav-button {
+    min-width: 110px;
+}
+
+.status-label {
+    font-size: 12px;
+    color: rgb(120, 200, 120);
+    flex-grow: 1;
+    text-align: center;
+}
+
+.status-label.error {
+    color: rgb(220, 120, 120);
+}
