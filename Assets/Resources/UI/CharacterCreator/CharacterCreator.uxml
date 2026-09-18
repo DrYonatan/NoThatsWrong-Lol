@@ -17,7 +17,10 @@
         </ui:VisualElement>
         <ui:VisualElement name="stage-2" class="stage" style="display: none;">
             <ui:Label text="Emotions &amp; Face" class="stage-title" style="-unity-font-style: bold; color: rgb(255, 255, 255); -unity-text-align: upper-center; font-size: 40px;"/>
-            <ui:DropdownField name="face-sprite-field" label="Face Sprite" style="color: rgb(255, 255, 255); -unity-font-style: bold; font-size: 25px;"/>
+            <ui:VisualElement name="face-sprite-row" class="face-sprite-row" style="flex-direction: row; align-items: center;">
+                <ui:Label name="face-sprite-label" text="No face sprite selected" class="field-hint" style="color: rgb(255, 255, 255); font-size: 25px; flex-grow: 1;"/>
+                <ui:Button name="face-sprite-button" text="Choose Face Sprite" class="add-emotion-button" style="font-size: 25px; -unity-font-style: bold; color: rgb(255, 255, 255);"/>
+            </ui:VisualElement>
             <ui:Label name="emotions-title" text="Emotions" class="section-label" style="-unity-font-style: bold; color: rgb(255, 255, 255); font-size: 30px;"/>
             <ui:VisualElement name="emotions-list" class="emotions-list"/>
             <ui:Button name="add-emotion-button" text="+ Add Emotion" class="add-emotion-button" style="font-size: 25px; -unity-font-style: bold; color: rgb(255, 255, 255);"/>

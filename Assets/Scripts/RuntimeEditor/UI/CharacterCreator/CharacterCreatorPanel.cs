@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -30,8 +31,11 @@ public class CharacterCreatorPanel : MonoBehaviour
     private Toggle noNameTagToggle;
     private Toggle notVisibleToggle;
 
-    private DropdownField faceSpriteField;
     private VisualElement emotionsList;
+
+    private Label faceSpriteLabel;
+    private Button faceSpriteButton;
+    private SpriteOption faceSpriteOption;
 
     private Vector2Field sizeField;
     private Vector2Field offsetField;
@@ -98,8 +102,11 @@ public class CharacterCreatorPanel : MonoBehaviour
         noNameTagToggle = root.Q<Toggle>("no-name-tag-field");
         notVisibleToggle = root.Q<Toggle>("not-visible-field");
 
-        faceSpriteField = root.Q<DropdownField>("face-sprite-field");
         emotionsList = root.Q("emotions-list");
+
+        faceSpriteLabel = root.Q<Label>("face-sprite-label");
+        faceSpriteButton = root.Q<Button>("face-sprite-button");
+        faceSpriteButton.clicked += OnChooseFaceSprite;
 
         sizeField = root.Q<Vector2Field>("size-field");
         offsetField = root.Q<Vector2Field>("offset-field");
@@ -129,10 +136,6 @@ public class CharacterCreatorPanel : MonoBehaviour
         spriteOptions = CharacterIO.LoadAvailableSprites();
 
         string[] choices = new[] { NoneOption }.Concat(spriteOptions.Select(o => o.Label)).ToArray();
-
-        faceSpriteField.choices = choices.ToList<string>();
-        if (string.IsNullOrEmpty(faceSpriteField.value))
-            faceSpriteField.value = NoneOption;
 
         foreach (var row in emotionsList.Children())
         {
@@ -194,11 +197,16 @@ public class CharacterCreatorPanel : MonoBehaviour
         nameField.AddToClassList("emotion-name");
         row.Add(nameField);
 
-        var spriteField = new DropdownField("Sprite") { name = "emotion-sprite" };
-        spriteField.AddToClassList("emotion-sprite");
-        spriteField.choices = new[] { NoneOption }.Concat(spriteOptions.Select(o => o.Label)).ToList();
-        spriteField.value = NoneOption;
-        row.Add(spriteField);
+        var chooseSpriteButton = new Button { text = "Choose Sprite" };
+        chooseSpriteButton.AddToClassList("emotion-choose-sprite");
+        chooseSpriteButton.clicked += () => {
+            string selectedSprite = CharacterIO.SpriteSelection();
+            if (!string.IsNullOrEmpty(selectedSprite))
+            {
+                spriteOptions.Add(new SpriteOption { Label = nameField.value, SourcePath = selectedSprite });
+            }
+        };
+        row.Add(chooseSpriteButton);
 
         var removeButton = new Button { text = "X" };
         removeButton.AddToClassList("emotion-remove");
@@ -206,6 +214,15 @@ public class CharacterCreatorPanel : MonoBehaviour
         row.Add(removeButton);
 
         emotionsList.Add(row);
+    }
+
+    private void OnChooseFaceSprite()
+    {
+        string selectedSprite = CharacterIO.SpriteSelection();
+        if (string.IsNullOrEmpty(selectedSprite)) return;
+
+        faceSpriteOption = new SpriteOption { Label = Path.GetFileName(selectedSprite), SourcePath = selectedSprite };
+        faceSpriteLabel.text = faceSpriteOption.Label;
     }
 
     private void CreateCharacter()
@@ -217,24 +234,23 @@ public class CharacterCreatorPanel : MonoBehaviour
         var emotions = new List<CharacterStateJson>();
         var usedEmotionNames = new HashSet<string>();
 
-        foreach (var element in emotionsList.Children())
+        foreach (SpriteOption spriteOption in spriteOptions)
         {
-            string emotionName = element.Q<TextField>("emotion-name").value?.Trim();
+            string emotionName = spriteOption.Label;
             if (string.IsNullOrEmpty(emotionName))
                 continue;
 
-            SpriteOption option = FindOption(element.Q<DropdownField>("emotion-sprite").value);
             string spriteRef = null;
-            if (option != null)
+            if (spriteOption != null)
             {
                 string filename = EmotionFileName(emotionName, usedEmotionNames);
-                if (CharacterIO.SaveSpriteImage(option, sanitizedName, filename, out string warning))
+                if (CharacterIO.SaveSpriteImage(spriteOption, sanitizedName, filename, out string warning))
                 {
                     spriteRef = filename;
                 }
                 else
                 {
-                    spriteRef = option.Label;
+                    spriteRef = spriteOption.Label;
                     if (warning != null) warnings.Add(warning);
                 }
             }
@@ -242,15 +258,17 @@ public class CharacterCreatorPanel : MonoBehaviour
             emotions.Add(new CharacterStateJson { name = emotionName, sprite = spriteRef });
         }
 
-        string faceFile = null;
-        SpriteOption faceOption = FindOption(faceSpriteField.value);
-        if (faceOption != null)
+        string faceSpriteRef = null;
+        if (faceSpriteOption != null)
         {
-            if (CharacterIO.SaveSpriteImage(faceOption, sanitizedName, "face.png", out string warning))
-                faceFile = "face.png";
-            else
-                faceFile = faceOption.Label;
-            if (warning != null) warnings.Add(warning);
+            if (CharacterIO.SaveSpriteImage(faceSpriteOption, sanitizedName, "face.png", out string faceWarning))
+            {
+                faceSpriteRef = "face.png";
+            }
+            else if (faceWarning != null)
+            {
+                warnings.Add(faceWarning);
+            }
         }
 
         var data = new CharacterJson
@@ -260,7 +278,7 @@ public class CharacterCreatorPanel : MonoBehaviour
             displayName = string.IsNullOrWhiteSpace(displayNameField.value) ? sanitizedName : displayNameField.value,
             noNameTag = noNameTagToggle.value,
             notVisible = notVisibleToggle.value,
-            faceSprite = faceFile,
+            faceSprite = faceSpriteRef,
             emotions = emotions,
             worldConfig = new CharacterWorldConfigJson
             {
@@ -307,7 +325,9 @@ public class CharacterCreatorPanel : MonoBehaviour
         noNameTagToggle.value = false;
         notVisibleToggle.value = false;
 
-        faceSpriteField.value = NoneOption;
+        faceSpriteOption = null;
+        faceSpriteLabel.text = "No face sprite selected";
+
         while (emotionsList.childCount > 0)
             emotionsList.RemoveAt(0);
 
@@ -333,5 +353,8 @@ public class CharacterCreatorPanel : MonoBehaviour
             if (option.SourcePath == null) continue;
             if (option.Texture != null) Destroy(option.Texture);
         }
+
+        if (faceSpriteOption != null && faceSpriteOption.Texture != null)
+            Destroy(faceSpriteOption.Texture);
     }
 }
