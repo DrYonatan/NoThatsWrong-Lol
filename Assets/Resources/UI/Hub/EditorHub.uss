@@ -1,0 +1,40 @@
+.hub-root {
+    flex-grow: 1;
+    padding: 48px;
+    align-items: center;
+    background-color: rgb(26, 26, 30);
+}
+
+.title-label {
+    font-size: 48px;
+    -unity-font-style: bold;
+    color: rgb(235, 235, 235);
+    margin-bottom: 8px;
+}
+
+.subtitle-label {
+    font-size: 18px;
+    color: rgb(160, 160, 168);
+    margin-bottom: 32px;
+}
+
+.menu-list {
+    width: 420px;
+}
+
+.menu-button {
+    min-height: 56px;
+    margin-bottom: 14px;
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: rgb(235, 235, 235);
+    background-color: rgb(32, 32, 37);
+    border-width: 1px;
+    border-color: rgb(48, 48, 54);
+    border-radius: 8px;
+}
+
+.menu-button:hover {
+    background-color: rgb(42, 42, 48);
+    border-color: rgb(66, 165, 245);
+}

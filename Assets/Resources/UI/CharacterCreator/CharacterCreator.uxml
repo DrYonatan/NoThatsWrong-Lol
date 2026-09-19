@@ -1,6 +1,9 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
     <ui:VisualElement name="creator-root" class="creator-root" style="align-content: flex-start; margin-left: 122px; margin-right: 67px; ">
-        <ui:Label name="title-label" text="Create a New Character" class="title-label" style="white-space: pre; -unity-font-style: bold; color: rgb(255, 255, 255); font-size: 70px; -unity-text-align: upper-left;"/>
+        <ui:VisualElement name="title-row" style="flex-direction: row; align-items: flex-start; justify-content: space-between;">
+            <ui:Label name="title-label" text="Create a New Character" class="title-label" style="white-space: pre; -unity-font-style: bold; color: rgb(255, 255, 255); font-size: 70px; -unity-text-align: upper-left;"/>
+            <ui:Button name="menu-button" text="Back to Menu" class="menu-button" style="font-size: 20px; -unity-font-style: bold; color: rgb(255, 255, 255);"/>
+        </ui:VisualElement>
         <ui:VisualElement class="progress-area">
             <ui:Label name="progress-label" text="Step 1 of 3" class="progress-label" style="-unity-font-style: bold; color: rgb(255, 255, 255); font-size: 20px;"/>
             <ui:VisualElement class="progress-track">

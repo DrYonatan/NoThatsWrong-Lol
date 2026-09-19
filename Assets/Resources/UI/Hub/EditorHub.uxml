@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="hub-root" class="hub-root">
+        <ui:Label name="title-label" text="Editor" class="title-label"/>
+        <ui:Label text="Choose what you'd like to work on." class="subtitle-label"/>
+        <ui:VisualElement name="menu-list" class="menu-list"/>
+    </ui:VisualElement>
+</ui:UXML>

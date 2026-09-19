@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class CharacterCreatorPanel : MonoBehaviour
+public class CharacterCreatorPanel : MonoBehaviour, IHubPanel
 {
     private const int TotalStages = 3;
     private const string UxmlPath = "UI/CharacterCreator/CharacterCreator";
@@ -41,9 +42,16 @@ public class CharacterCreatorPanel : MonoBehaviour
     private Vector2Field offsetField;
     private FloatField faceHeightField;
 
-    public void Show()
+    private Button menuButton;
+    private Action onReturnToHub;
+
+    public void Show() => Show(null);
+
+    public void Show(Action returnToHub)
     {
+        onReturnToHub = returnToHub;
         EnsureCreated();
+        menuButton.style.display = onReturnToHub != null ? DisplayStyle.Flex : DisplayStyle.None;
         document.rootVisualElement.style.display = DisplayStyle.Flex;
     }
 
@@ -58,11 +66,6 @@ public class CharacterCreatorPanel : MonoBehaviour
 
     [ContextMenu("Hide Panel")]
     private void HideFromInspector() => Hide();
-
-    private void Start()
-    {
-        Show();
-    }
 
     private void EnsureCreated()
     {
@@ -114,9 +117,11 @@ public class CharacterCreatorPanel : MonoBehaviour
 
         backButton = root.Q<Button>("back-button");
         nextButton = root.Q<Button>("next-button");
+        menuButton = root.Q<Button>("menu-button");
 
         backButton.clicked += () => ShowStage(currentStage - 1);
         nextButton.clicked += OnNext;
+        menuButton.clicked += OnReturnToHub;
 
         root.Q<Button>("add-emotion-button").clicked += AddEmotionRow;
 
@@ -130,8 +135,8 @@ public class CharacterCreatorPanel : MonoBehaviour
         foreach (var option in spriteOptions)
         {
             if (option.SourcePath == null) continue;
-            if (option.Texture != null) Object.Destroy(option.Texture);
-            if (option.Sprite != null) Object.Destroy(option.Sprite);
+            if (option.Texture != null) UnityEngine.Object.Destroy(option.Texture);
+            if (option.Sprite != null) UnityEngine.Object.Destroy(option.Sprite);
         }
         spriteOptions = CharacterIO.LoadAvailableSprites();
 
@@ -171,6 +176,12 @@ public class CharacterCreatorPanel : MonoBehaviour
             CreateCharacter();
         else
             ShowStage(currentStage + 1);
+    }
+
+    private void OnReturnToHub()
+    {
+        Hide();
+        onReturnToHub?.Invoke();
     }
 
     private bool ValidateStage()
@@ -310,12 +321,6 @@ public class CharacterCreatorPanel : MonoBehaviour
             index++;
         }
         return name;
-    }
-
-    private SpriteOption FindOption(string label)
-    {
-        if (label == NoneOption) return null;
-        return spriteOptions.FirstOrDefault(o => o.Label == label);
     }
 
     private void ResetForm()

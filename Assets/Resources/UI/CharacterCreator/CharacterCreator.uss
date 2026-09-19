@@ -109,6 +109,19 @@
     align-self: flex-start;
 }
 
+.menu-button {
+    min-width: 140px;
+    min-height: 36px;
+    background-color: rgb(32, 32, 37);
+    border-width: 1px;
+    border-color: rgb(48, 48, 54);
+    border-radius: 6px;
+}
+
+.menu-button:hover {
+    border-color: rgb(66, 165, 245);
+}
+
 .nav-bar {
     flex-direction: row;
     justify-content: space-between;
