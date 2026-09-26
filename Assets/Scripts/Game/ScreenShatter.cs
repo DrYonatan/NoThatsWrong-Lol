@@ -1,0 +1,123 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using DG.Tweening;
+
+
+
+public class ScreenShatterManager : MonoBehaviour
+{ 
+    [Serializable]
+    class FlashGroup 
+    {
+        public List<Image> pieces = new ();
+    }
+    
+    [SerializeField] private RawImage screenImage;
+    [SerializeField] private CanvasGroup canvasGroup;
+    [SerializeField] private List<FlashGroup> flashGroups = new ();
+    [SerializeField] private List<ScreenPiece> pieces;
+    [SerializeField] private RawImage blackImage;
+   // [SerializeField] private PostProcessVolume  psVolume;
+    [SerializeField] private GameObject breakText;
+    [SerializeField] private float flashDuration = 0.05f;
+    [SerializeField] private AudioClip shatterSound;
+    [SerializeField] private float duration = 3f;
+
+    public IEnumerator ScreenShatter()
+    {
+        SoundManager.instance.PlaySoundEffect(shatterSound);
+        yield return new WaitForEndOfFrame();
+        Texture2D screenShot = ScreenCapture.CaptureScreenshotAsTexture();
+        Texture2D newScreenShot = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
+        newScreenShot.SetPixels(screenShot.GetPixels());
+        newScreenShot.Apply();
+        
+        ChangePiecesTransparency(0f);
+        yield return new WaitForEndOfFrame();
+        screenImage.texture = newScreenShot;
+        screenImage.color = new Color(255, 255, 255, 1);
+        canvasGroup.alpha = 1f;
+        // GameLoop.instance.debateUIAnimator.gameObject.SetActive(false);
+        yield return FlashPieces();
+        ChangePiecesTransparency(1f);
+        
+        screenImage.color = Color.black;
+        foreach (ScreenPiece piece in pieces)
+        {
+            piece.image.texture = newScreenShot;
+        }
+
+        yield return new WaitForSeconds(0.25f);
+        yield return Shatter();
+    }
+    
+    private IEnumerator FlashPieces()
+    {
+        foreach(FlashGroup flashGroup in flashGroups)
+        {
+            if (flashGroup.pieces.Count == 0)
+            {
+                yield return new WaitForSeconds(flashDuration);
+                continue;
+            }
+            foreach (Image piece in flashGroup.pieces)
+            {
+                piece.color = new Color(255, 255, 255, 1);
+            }
+            yield return new WaitForSeconds(flashDuration);
+            foreach (Image piece in flashGroup.pieces)
+            {
+                piece.color = new Color(255, 255, 255, 0);
+            }
+        }
+        
+    }
+
+    private void ChangePiecesTransparency(float transparency)
+    { 
+        foreach (ScreenPiece piece in pieces) 
+        { 
+            piece.mask.color = new Color(255, 255, 255, transparency);
+        }
+    }
+
+    private IEnumerator Shatter()
+    {
+        TrialManager.instance.barsAnimator.HideGlobalBars(0f);
+        foreach (ScreenPiece piece in pieces)
+        {
+            StartCoroutine(piece.Move(duration));
+        }
+
+        screenImage.texture = null;
+        screenImage.DOColor(Color.white, 0.8f)
+            .SetLoops(2, LoopType.Yoyo);
+        float elapsedTime = 0f;
+        while (elapsedTime < duration / 3)
+        {
+        //    psVolume.weight =  Mathf.Lerp(0f, 0.8f, elapsedTime / 1f);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        
+        breakText.SetActive(true);
+
+        elapsedTime = 0f;
+        while (elapsedTime < 0.5f)
+        {
+         //   psVolume.weight =  Mathf.Lerp(0.8f, 0f, elapsedTime / 0.5f);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        
+        blackImage.DOColor(Color.black, duration / 3);
+        yield return new WaitForSeconds(2f);
+        ImageScript.instance.FadeToBlack(0f);
+        canvasGroup.alpha = 0;
+        Destroy(gameObject);
+    }
+    
+}

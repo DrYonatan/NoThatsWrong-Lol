@@ -9,7 +9,7 @@ public class CourtRoomCharacter : MonoBehaviour
         SetSprite(character.FindStateByName("default"));
     }
 
-    private void SetSprite(CharacterState state)
+    public void SetSprite(CharacterState state)
     {
         if (state != null)
         {

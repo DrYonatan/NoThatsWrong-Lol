@@ -1,0 +1,70 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using DIALOGUE;
+using UnityEngine;
+
+[Serializable]
+public class DialogueNode
+{
+    public Rect nodeRect;
+    public Vector2 commandsScrollPosition;
+
+    public string title;
+
+    public Character character;
+    public string displayName;
+
+    public int expressionIndex;
+
+    [SerializeReference] public TextData textData;
+
+    public AudioClip voiceLine;
+
+    public DialogueNode()
+    {
+        InitializeTextData();
+    }
+
+    public DialogueNode(DialogueNode copy)
+    {
+        InitializeTextData();
+        character = copy.character;
+        displayName = copy.displayName;
+        expressionIndex = copy.expressionIndex;
+    }
+
+    protected virtual void InitializeTextData()
+    {
+        textData = new VNTextData();
+    }
+
+    public virtual IEnumerator Play()
+    {
+        // VNTextData data = textData as VNTextData;
+        
+        // if(data == null)
+        //     yield break;
+
+        // yield return DialogueSystem.instance.RunBeforeCommands(data.commands);
+        
+        // if (character != null && VNNodePlayer.instance.currentConversation?.settings != null && !character.notVisible)
+        // {
+        //     CharacterPositionMapping info = VNNodePlayer.instance.currentConversation.settings.characterPositions.Find(characterInfo =>
+        //         characterInfo.character == character);
+        //     VNCharacterManager.instance.SetSpeaker(character);
+        //     VNCharacterManager.instance.ShowOnlySpeaker(character, DialogueSystem.instance.GetIsSkip() ? 0 : 0.25f);
+        //     VNCharacterManager.instance.SwitchEmotion(character, character.emotions[expressionIndex]);
+        //     PlayerInputManager.instance.isInputActive = false;
+        //     yield return CameraManager.instance.MoveCamera((CameraLookDirection)info.position, DialogueSystem.instance.GetIsSkip() ? 0 : 0.2f);
+        //     PlayerInputManager.instance.isInputActive = true;
+        // }
+        
+        // if (!DialogueSystem.instance.GetIsSkip())
+        // {
+        //     SoundManager.instance.PlaySoundEffect(voiceLine);
+        // }
+        
+        yield return DialogueSystem.instance.Say(this);
+    }
+}
