@@ -45,14 +45,6 @@ public class CharacterWorldConfigJson
     }
 }
 
-public class SpriteOption
-{
-    public string Label;
-    public Sprite Sprite;
-    public Texture2D Texture;
-    public string SourcePath;
-}
-
 public static class CharacterIO
 {
     public const float DefaultPixelsPerUnit = 100f;
@@ -74,8 +66,71 @@ public static class CharacterIO
             && File.Exists(Path.Combine(CharacterFolder(name), "character.json"));
     }
 
-    public static void Save(CharacterJson data)
+    public static CharacterJson CharacterToJson(Character character)
     {
+        if (character == null) return null;
+
+        return new CharacterJson
+        {
+            id = character.id,
+            name = character.name,
+            displayName = character.displayName,
+            notVisible = character.notVisible,
+            noNameTag = character.noNameTag,
+            textColor = character.textColor,
+            faceSprite = character.faceSprite != null ? character.faceSprite.name : null,
+            emotions = character.emotions?.Select(e => new CharacterStateJson
+            {
+                name = e.name,
+                sprite = e.sprite != null ? e.sprite.name : null
+            }).ToList(),
+            worldConfig = CharacterWorldConfigJson.From(character.worldConfig)
+        };
+    }
+
+    public static Character JsonToCharacter(CharacterJson data)
+    {
+        if (data == null) return null;
+
+        var character = new Character
+        {
+            id = data.id,
+            name = data.name,
+            displayName = data.displayName,
+            notVisible = data.notVisible,
+            noNameTag = data.noNameTag,
+            textColor = data.textColor,
+            faceSprite = LoadSpriteFile(data.name, data.faceSprite),
+            emotions = new List<CharacterState>(),
+            worldConfig = data.worldConfig == null
+                ? null
+                : new CharacterWorldConfig
+                {
+                    size = data.worldConfig.size,
+                    offset = data.worldConfig.offset,
+                    faceHeight = data.worldConfig.faceHeight
+                }
+        };
+
+        if (data.emotions != null)
+        {
+            foreach (var emotion in data.emotions)
+            {
+                character.emotions.Add(new CharacterState
+                {
+                    name = emotion.name,
+                    sprite = LoadSpriteFile(data.name, emotion.sprite)
+                });
+            }
+        }
+
+        return character;
+    }
+
+    public static void Save(Character character)
+    {
+        CharacterJson data = CharacterToJson(character);
+
         if (data == null) throw new ArgumentNullException(nameof(data));
         if (string.IsNullOrEmpty(data.name)) throw new ArgumentException("A character needs a name.", nameof(data));
 
@@ -84,55 +139,12 @@ public static class CharacterIO
         File.WriteAllText(Path.Combine(folder, "character.json"), JsonUtility.ToJson(data, true));
     }
 
-    public static CharacterJson Load(string name)
+    public static Character Load(string name)
     {
         if (string.IsNullOrEmpty(name)) return null;
         string path = Path.Combine(CharacterFolder(name), "character.json");
         if (!File.Exists(path)) return null;
-        return JsonUtility.FromJson<CharacterJson>(File.ReadAllText(path));
-    }
-
-    public static List<string> GetAllNames()
-    {
-        if (!Directory.Exists(CharactersPath)) return new List<string>();
-        return Directory.GetDirectories(CharactersPath)
-            .Select(d => Path.GetFileName(d))
-            .Where(n => File.Exists(Path.Combine(CharactersPath, n, "character.json")))
-            .ToList();
-    }
-
-    public static List<SpriteOption> LoadAvailableSprites()
-    {
-        var options = new List<SpriteOption>();
-        var used = new HashSet<string>();
-
-        foreach (var sprite in Resources.LoadAll<Sprite>("UserData/Characters"))
-        {
-            string label = sprite.name;
-            int index = 2;
-            while (!used.Add(label))
-                label = sprite.name + " (" + (sprite.texture != null ? sprite.texture.name : string.Empty) + " " + index++ + ")";
-
-            options.Add(new SpriteOption { Label = label, Sprite = sprite, Texture = sprite.texture });
-        }
-
-        if (Directory.Exists(CharactersPath))
-        {
-            foreach (string file in Directory.EnumerateFiles(CharactersPath, "*.png", SearchOption.AllDirectories))
-            {
-                string rel = file.Substring(CharactersPath.Length).TrimStart('\\', '/').Replace('\\', '/');
-                if (!used.Add(rel)) continue;
-
-                Texture2D tex = LoadTexture(file);
-                if (tex == null) continue;
-
-                Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height),
-                    new Vector2(0.5f, 0.5f), DefaultPixelsPerUnit);
-                options.Add(new SpriteOption { Label = rel, Sprite = sprite, Texture = tex, SourcePath = file });
-            }
-        }
-
-        return options;
+        return JsonToCharacter(JsonUtility.FromJson<CharacterJson>(File.ReadAllText(path)));
     }
 
     public static string SpriteSelection()
@@ -178,47 +190,47 @@ public static class CharacterIO
         }
     }
 
-    public static bool SaveSpriteImage(SpriteOption option, string characterName, string fileName, out string warning)
-    {
-        warning = null;
-        if (option == null) return false;
+    // public static bool SaveSpriteImage(SpriteOption option, string characterName, string fileName, out string warning)
+    // {
+    //     warning = null;
+    //     if (option == null) return false;
 
-        string folder = CharacterFolder(characterName);
-        Directory.CreateDirectory(folder);
-        string dest = Path.Combine(folder, fileName);
+    //     string folder = CharacterFolder(characterName);
+    //     Directory.CreateDirectory(folder);
+    //     string dest = Path.Combine(folder, fileName);
 
-        try
-        {
-            if (!string.IsNullOrEmpty(option.SourcePath) && File.Exists(option.SourcePath))
-            {
-                File.Copy(option.SourcePath, dest, true);
-                return true;
-            }
+    //     try
+    //     {
+    //         if (!string.IsNullOrEmpty(option.SourcePath) && File.Exists(option.SourcePath))
+    //         {
+    //             File.Copy(option.SourcePath, dest, true);
+    //             return true;
+    //         }
 
-            if (option.Sprite != null)
-            {
-                Texture2D cropped = CropSprite(option.Sprite);
-                if (cropped != null)
-                {
-                    File.WriteAllBytes(dest, cropped.EncodeToPNG());
-                    UnityEngine.Object.Destroy(cropped);
-                    return true;
-                }
-            }
+    //         if (option.Sprite != null)
+    //         {
+    //             Texture2D cropped = CropSprite(option.Sprite);
+    //             if (cropped != null)
+    //             {
+    //                 File.WriteAllBytes(dest, cropped.EncodeToPNG());
+    //                 UnityEngine.Object.Destroy(cropped);
+    //                 return true;
+    //             }
+    //         }
 
-            if (option.Texture != null && option.Texture.isReadable)
-            {
-                File.WriteAllBytes(dest, option.Texture.EncodeToPNG());
-                return true;
-            }
-        }
-        catch
-        {
-        }
+    //         if (option.Texture != null && option.Texture.isReadable)
+    //         {
+    //             File.WriteAllBytes(dest, option.Texture.EncodeToPNG());
+    //             return true;
+    //         }
+    //     }
+    //     catch
+    //     {
+    //     }
 
-        warning = "Could not extract an image for '" + option.Label + "'. Saved the sprite name as a reference instead.";
-        return false;
-    }
+    //     warning = "Could not extract an image for '" + option.Label + "'. Saved the sprite name as a reference instead.";
+    //     return false;
+    // }
 
     public static Sprite LoadSpriteFile(string characterName, string fileName)
     {

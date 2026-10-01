@@ -1,5 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
-    <ui:VisualElement name="creator-root" class="creator-root" style="align-content: flex-start; margin-left: 122px; margin-right: 67px; ">
+    <Style src="project://database/Assets/Resources/UI/CharacterCreator/CharacterCreator.uss?fileID=7433441132597879392&amp;guid=e9f97145d8dccc248b43f803bcaa90fb&amp;type=3#CharacterCreator"/>
+    <ui:VisualElement name="creator-root" class="creator-root" style="align-content: flex-start; margin-left: 122px; margin-right: 67px;">
         <ui:VisualElement name="title-row" style="flex-direction: row; align-items: flex-start; justify-content: space-between;">
             <ui:Label name="title-label" text="Create a New Character" class="title-label" style="white-space: pre; -unity-font-style: bold; color: rgb(255, 255, 255); font-size: 70px; -unity-text-align: upper-left;"/>
             <ui:Button name="menu-button" text="Back to Menu" class="menu-button" style="font-size: 20px; -unity-font-style: bold; color: rgb(255, 255, 255);"/>

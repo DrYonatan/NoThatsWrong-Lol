@@ -70,7 +70,7 @@ public class RuntimeEditorHub : MonoBehaviour
             if (entry.panel == null || string.IsNullOrEmpty(entry.label))
                 continue;
 
-            var hubPanel = entry.panel as IHubPanel;
+            var hubPanel = entry.panel as IEditorMenu;
             if (hubPanel == null)
             {
                 Debug.LogWarning("RuntimeEditorHub: '" + entry.panel.name + "' does not implement IHubPanel and will be skipped.");
@@ -84,10 +84,10 @@ public class RuntimeEditorHub : MonoBehaviour
         }
     }
 
-    private void OpenPanel(IHubPanel panel)
+    private void OpenPanel(IEditorMenu panel)
     {
         Hide();
-        panel.Show(Show);
+        panel.Show();
     }
 
     private void OnDestroy()
