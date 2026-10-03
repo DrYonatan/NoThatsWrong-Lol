@@ -129,14 +129,35 @@ public static class CharacterIO
 
     public static void Save(Character character)
     {
-        CharacterJson data = CharacterToJson(character);
+        if (character == null) throw new ArgumentNullException(nameof(character));
+        if (string.IsNullOrEmpty(character.name)) throw new ArgumentException("A character needs a name.", nameof(character));
 
-        if (data == null) throw new ArgumentNullException(nameof(data));
-        if (string.IsNullOrEmpty(data.name)) throw new ArgumentException("A character needs a name.", nameof(data));
-
-        string folder = CharacterFolder(data.name);
+        string folder = CharacterFolder(character.name);
         Directory.CreateDirectory(folder);
+
+        SaveSpriteImage(character.faceSprite, folder, "face.png");
+        if (character.emotions != null)
+        {
+            for (int i = 0; i < character.emotions.Count; i++)
+            {
+                CharacterState emotion = character.emotions[i];
+                string fileName = string.IsNullOrEmpty(emotion.name) ? "emotion" + i : emotion.name;
+                SaveSpriteImage(emotion.sprite, folder, Sanitize(fileName) + ".png");
+            }
+        }
+
+        CharacterJson data = CharacterToJson(character);
         File.WriteAllText(Path.Combine(folder, "character.json"), JsonUtility.ToJson(data, true));
+    }
+
+    // Writes the sprite's texture as a PNG into the character folder and renames the
+    // sprite to match, so CharacterToJson stores a file name LoadSpriteFile can find.
+    private static void SaveSpriteImage(Sprite sprite, string folder, string fileName)
+    {
+        if (sprite == null || sprite.texture == null) return;
+
+        File.WriteAllBytes(Path.Combine(folder, fileName), sprite.texture.EncodeToPNG());
+        sprite.name = fileName;
     }
 
     public static Character Load(string name)
@@ -282,39 +303,5 @@ public static class CharacterIO
         }
 
         return character;
-    }
-
-    private static Texture2D CropSprite(Sprite sprite)
-    {
-        if (sprite == null || sprite.texture == null) return null;
-
-        Rect rect = sprite.textureRect;
-        int width = Mathf.Clamp(Mathf.RoundToInt(rect.width), 1, 4096);
-        int height = Mathf.Clamp(Mathf.RoundToInt(rect.height), 1, 4096);
-        int x = Mathf.RoundToInt(rect.x);
-        int y = Mathf.RoundToInt(rect.y);
-
-        var rt = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
-        RenderTexture previous = RenderTexture.active;
-
-        try
-        {
-            Graphics.CopyTexture(sprite.texture, 0, 0, x, y, width, height, rt, 0, 0, 0, 0);
-            RenderTexture.active = rt;
-
-            var result = new Texture2D(width, height, TextureFormat.RGBA32, false);
-            result.ReadPixels(new Rect(0, 0, width, height), 0, 0);
-            result.Apply();
-            return result;
-        }
-        catch
-        {
-            return null;
-        }
-        finally
-        {
-            RenderTexture.active = previous;
-            RenderTexture.ReleaseTemporary(rt);
-        }
     }
 }
